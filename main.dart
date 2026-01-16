@@ -23,7 +23,7 @@ class ShopApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Shop App',
+      title: 'West Coast Tour Partners',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
@@ -41,12 +41,14 @@ class Item {
   final String name;
   final String description;
   final int priceCents;
+  final String imageAsset;
 
   const Item({
     required this.id,
     required this.name,
     required this.description,
     required this.priceCents,
+    required this.imageAsset,
   });
 
   String get priceText => _formatCents(priceCents);
@@ -62,27 +64,66 @@ class CatalogModel extends ChangeNotifier {
   final List<Item> _items = const [
     Item(
       id: '1',
-      name: 'Coffee Beans',
-      description: 'Fresh roasted beans (12 oz).',
-      priceCents: 1299,
+      name: 'Cocktails And Stories From Pike Place Market',
+      description: 'Discover Seattle’s Pike Place Market through its flavors, then a hands-on cocktail class with founder Bryan Jarr or one of his staff. You’ll shop the Market for fresh ingredients, learn mixology techniques, and craft signature Northwest cocktails',
+      priceCents: 13500,
+      imageAsset: 'assets/images/Friends.JPG'
     ),
     Item(
       id: '2',
-      name: 'Ceramic Mug',
-      description: 'A sturdy mug for your daily drink.',
-      priceCents: 1599,
+      name: 'Elite - Luxury Shuttle & Best Day in Seattle',
+      description: 'Elite VIP - Shuttle & All-inclusive Ultimate City Experience Pass',
+      priceCents: 27900,
+      imageAsset: 'assets/images/GreatWheel.JPG',
     ),
     Item(
       id: '3',
-      name: 'French Press',
-      description: 'Simple brewing at home.',
-      priceCents: 3499,
+      name: 'Friends Pass: ScooTours Adventure, Pike Place - The Market Experience, Seattle Great Wheel, Beneath The Streets underground tour',
+      description: 'Friends Pass - Shuttle & All-inclusive Ultimate City Experience Pass',
+      priceCents: 18500,
+      imageAsset: 'assets/images/m2g.JPG',
     ),
     Item(
       id: '4',
-      name: 'Kettle',
-      description: 'Gooseneck kettle for pour-over.',
-      priceCents: 4999,
+      name: 'Great Wheel - add on admission',
+      description: 'Seattles Great Wheel - add on admission',
+      imageAsset: 'assets/images/pikeplace.JPG',
+      priceCents: 2500,
+    ),
+        Item(
+      id: '5',
+      name: 'New Years Eve Sunset on the Sound Cocktail Cruise',
+      description: 'New Year’s Eve Sunset on the Sound. Celebrate the year’s end with a scenic cruise on Puget Sound! Enjoy festive music, city lights, and stunning views as the sun sets behind the Olympics and Seattle comes alive for New Year’s Eve.',
+      priceCents: 25900,
+      imageAsset: 'assets/images/private.JPG',
+    ),
+        Item(
+      id: '6',
+      name: 'Pike Place The Market Experience Tour',
+      description: 'The Market Experience is a one-hour guided walking tour through the heart of Seattle’s iconic Pike Place Market. Led by a local storyteller, you’ll explore hidden corners, meet market makers, and learn the surprising history behind the Market’s shops.',
+      priceCents: 4200,
+      imageAsset: 'assets/images/Scootours.JPG',
+    ),
+        Item(
+      id: '7',
+      name: 'Private Seattle Waterfront ScooTour',
+      description: 'Private ScooTour along the Waterfront - See Seattle Differently.',
+      priceCents: 4900,
+      imageAsset: 'assets/images/private.JPG',
+    ),
+        Item(
+      id: '8',
+      name: 'Seattle Sightseeing ScooTour',
+      description: 'Guided Electric Scooter Ride along the Waterfront - See Seattle Differently.',
+      priceCents: 3900,
+      imageAsset: 'assets/images/Scootours.JPG',
+    ),
+        Item(
+      id: '9',
+      name: 'White Heron Cellars Tasting',
+      description: 'Seattles Great Wheel - add on admission',
+      priceCents: 3800,
+      imageAsset: 'assets/images/wine.JPG',
     ),
   ];
 
@@ -222,7 +263,7 @@ class _ShopHomeState extends State<ShopHome> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shop App'),
+        title: const Text('West Coast Tour Partners'),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
@@ -270,64 +311,185 @@ class CatalogScreen extends StatelessWidget {
     final catalog = context.watch<CatalogModel>();
     final cart = context.watch<CartModel>();
 
-    return ListView.separated(
+    return GridView.builder(
       padding: const EdgeInsets.all(12),
       itemCount: catalog.items.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      // gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      //   crossAxisCount: 2,      // 👈 number of columns
+      //   mainAxisSpacing: 12,    // vertical space
+      //   crossAxisSpacing: 12,   // horizontal space
+      //   childAspectRatio: 0.7,  // 👈 card shape (important!)
+      // ),
+
+      //edit grid size here
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+      maxCrossAxisExtent: 220,
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      childAspectRatio: 0.55,
+      ),
+  // 👆 END GRID DELEGATE
       itemBuilder: (context, index) {
         final item = catalog.items[index];
         final qty = cart.quantityFor(item.id);
 
         return Card(
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.name,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AspectRatio(
+                aspectRatio: 1 / 1,
+                child: Image.asset(
+                  item.imageAsset,
+                  fit: BoxFit.cover,
                 ),
-                const SizedBox(height: 6),
-                Text(item.description),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Text(
-                      item.priceText,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
-                    const Spacer(),
-                    if (qty == 0)
-                      FilledButton.icon(
-                        onPressed: () => cart.add(item),
-                        icon: const Icon(Icons.add_shopping_cart),
-                        label: const Text('Add'),
-                      )
-                    else
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () => cart.removeOne(item),
-                            icon: const Icon(Icons.remove_circle_outline),
-                          ),
-                          Text('$qty', style: const TextStyle(fontSize: 16)),
-                          IconButton(
-                            onPressed: () => cart.add(item),
-                            icon: const Icon(Icons.add_circle_outline),
-                          ),
-                        ],
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                  ],
-                )
-              ],
-            ),
+                      const SizedBox(height: 4),
+                      Text(item.priceText),
+
+                      const Spacer(), // 👈 pushes button row to the bottom
+
+                      if (qty == 0)
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed: () => cart.add(item),
+                            child: const Text('Add'),
+                          ),
+                        )
+                      else
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              onPressed: () => cart.removeOne(item),
+                              icon: const Icon(Icons.remove),
+                            ),
+                            Text('$qty'),
+                            IconButton(
+                              onPressed: () => cart.add(item),
+                              icon: const Icon(Icons.add),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+
+            ],
           ),
         );
       },
     );
   }
 }
+
+
+// class CatalogScreen extends StatelessWidget {
+//   const CatalogScreen({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final catalog = context.watch<CatalogModel>();
+//     final cart = context.watch<CartModel>();
+
+//     return ListView.separated(
+//       padding: const EdgeInsets.all(12),
+//       itemCount: catalog.items.length,
+//       separatorBuilder: (_, __) => const SizedBox(height: 10),
+//       itemBuilder: (context, index) {
+//         final item = catalog.items[index];
+//         final qty = cart.quantityFor(item.id);
+
+//         return Card(
+//           clipBehavior: Clip.antiAlias,
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               // AspectRatio(
+//               //   aspectRatio: 16 / 9,
+//               //   child: Image.asset(
+//               //     item.imageAsset,
+//               //     fit: BoxFit.cover,
+//               //     errorBuilder: (context, error, stack) {
+//               //       return const Center(child: Text('Image not found'));
+//               //     },
+//               //   ),
+//               // ),
+//               SizedBox(
+//                 height: 180,
+//                 width: 180,
+//                 // width: double.infinity,
+//                 child: Image.asset(
+//                 item.imageAsset,
+//                 fit: BoxFit.cover,
+//                 ),
+//               ),
+//               Padding(
+//                 padding: const EdgeInsets.all(14),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(
+//                       item.name,
+//                       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//                     ),
+//                     const SizedBox(height: 6),
+//                     Text(item.description),
+//                     const SizedBox(height: 10),
+//                     Row(
+//                       children: [
+//                         Text(
+//                           item.priceText,
+//                           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+//                         ),
+//                         const Spacer(),
+//                         if (qty == 0)
+//                         FilledButton.icon(
+//                         onPressed: () => cart.add(item),
+//                         icon: const Icon(Icons.add_shopping_cart),
+//                         label: const Text('Add'),
+//                         )
+//                         else
+//                           Row(
+//                             children: [
+//                               IconButton(
+//                                 onPressed: () => cart.removeOne(item),
+//                                 icon: const Icon(Icons.remove_circle_outline),
+//                               ),
+//                               Text('$qty', style: const TextStyle(fontSize: 16)),
+//                               IconButton(
+//                                 onPressed: () => cart.add(item),
+//                                 icon: const Icon(Icons.add_circle_outline),
+//                               ),
+//                             ],
+//                           ),
+//                       ],
+//                     )
+//                   ],
+//                 ),
+//               ),
+//             ], 
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
