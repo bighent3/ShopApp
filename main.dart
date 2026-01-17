@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'screens/product_detail_screen.dart';
+
 
 void main() {
   runApp(
@@ -25,6 +27,7 @@ class ShopApp extends StatelessWidget {
     return MaterialApp(
       title: 'West Coast Tour Partners',
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.yellow,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
       ),
@@ -328,168 +331,85 @@ class CatalogScreen extends StatelessWidget {
       crossAxisSpacing: 12,
       childAspectRatio: 0.55,
       ),
-  // 👆 END GRID DELEGATE
+      // 👆 END GRID DELEGATE
       itemBuilder: (context, index) {
         final item = catalog.items[index];
         final qty = cart.quantityFor(item.id);
 
-        return Card(
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AspectRatio(
-                aspectRatio: 1 / 1,
-                child: Image.asset(
-                  item.imageAsset,
-                  fit: BoxFit.cover,
-                ),
+        return InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ProductDetailScreen(item: item),
               ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(item.priceText),
-
-                      const Spacer(), // 👈 pushes button row to the bottom
-
-                      if (qty == 0)
-                        SizedBox(
-                          width: double.infinity,
-                          child: FilledButton(
-                            onPressed: () => cart.add(item),
-                            child: const Text('Add'),
-                          ),
-                        )
-                      else
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              onPressed: () => cart.removeOne(item),
-                              icon: const Icon(Icons.remove),
-                            ),
-                            Text('$qty'),
-                            IconButton(
-                              onPressed: () => cart.add(item),
-                              icon: const Icon(Icons.add),
-                            ),
-                          ],
-                        ),
-                    ],
+            );
+          },
+          child: Card(
+            color: Colors.orange,
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AspectRatio(
+                  aspectRatio: 1 / 1,
+                  child: Image.asset(
+                    item.imageAsset,
+                    fit: BoxFit.cover,
                   ),
                 ),
-              ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(item.priceText),
 
-            ],
+                        const Spacer(),
+
+                        if (qty == 0)
+                          SizedBox(
+                            width: double.infinity,
+                            child: FilledButton(
+                              onPressed: () => cart.add(item),
+                              child: const Text('Add'),
+                            ),
+                          )
+                        else
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                onPressed: () => cart.removeOne(item),
+                                icon: const Icon(Icons.remove),
+                              ),
+                              Text('$qty'),
+                              IconButton(
+                                onPressed: () => cart.add(item),
+                                icon: const Icon(Icons.add),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        );
+        ),
       },
     );
   }
 }
-
-
-// class CatalogScreen extends StatelessWidget {
-//   const CatalogScreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final catalog = context.watch<CatalogModel>();
-//     final cart = context.watch<CartModel>();
-
-//     return ListView.separated(
-//       padding: const EdgeInsets.all(12),
-//       itemCount: catalog.items.length,
-//       separatorBuilder: (_, __) => const SizedBox(height: 10),
-//       itemBuilder: (context, index) {
-//         final item = catalog.items[index];
-//         final qty = cart.quantityFor(item.id);
-
-//         return Card(
-//           clipBehavior: Clip.antiAlias,
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               // AspectRatio(
-//               //   aspectRatio: 16 / 9,
-//               //   child: Image.asset(
-//               //     item.imageAsset,
-//               //     fit: BoxFit.cover,
-//               //     errorBuilder: (context, error, stack) {
-//               //       return const Center(child: Text('Image not found'));
-//               //     },
-//               //   ),
-//               // ),
-//               SizedBox(
-//                 height: 180,
-//                 width: 180,
-//                 // width: double.infinity,
-//                 child: Image.asset(
-//                 item.imageAsset,
-//                 fit: BoxFit.cover,
-//                 ),
-//               ),
-//               Padding(
-//                 padding: const EdgeInsets.all(14),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Text(
-//                       item.name,
-//                       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//                     ),
-//                     const SizedBox(height: 6),
-//                     Text(item.description),
-//                     const SizedBox(height: 10),
-//                     Row(
-//                       children: [
-//                         Text(
-//                           item.priceText,
-//                           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-//                         ),
-//                         const Spacer(),
-//                         if (qty == 0)
-//                         FilledButton.icon(
-//                         onPressed: () => cart.add(item),
-//                         icon: const Icon(Icons.add_shopping_cart),
-//                         label: const Text('Add'),
-//                         )
-//                         else
-//                           Row(
-//                             children: [
-//                               IconButton(
-//                                 onPressed: () => cart.removeOne(item),
-//                                 icon: const Icon(Icons.remove_circle_outline),
-//                               ),
-//                               Text('$qty', style: const TextStyle(fontSize: 16)),
-//                               IconButton(
-//                                 onPressed: () => cart.add(item),
-//                                 icon: const Icon(Icons.add_circle_outline),
-//                               ),
-//                             ],
-//                           ),
-//                       ],
-//                     )
-//                   ],
-//                 ),
-//               ),
-//             ], 
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
