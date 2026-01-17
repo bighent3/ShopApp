@@ -266,6 +266,7 @@ class _ShopHomeState extends State<ShopHome> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.orange,
         title: const Text('West Coast Tour Partners'),
         actions: [
           Padding(
@@ -372,9 +373,7 @@ class CatalogScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(item.priceText),
-
                         const Spacer(),
-
                         if (qty == 0)
                           SizedBox(
                             width: double.infinity,
@@ -405,8 +404,9 @@ class CatalogScreen extends StatelessWidget {
               ],
             ),
           ),
-        ),
+        );
       },
+
     );
   }
 }
