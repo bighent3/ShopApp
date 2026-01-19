@@ -70,14 +70,14 @@ class CatalogModel extends ChangeNotifier {
       name: 'Cocktails And Stories From Pike Place Market',
       description: 'Discover Seattle’s Pike Place Market through its flavors, then a hands-on cocktail class with founder Bryan Jarr or one of his staff. You’ll shop the Market for fresh ingredients, learn mixology techniques, and craft signature Northwest cocktails',
       priceCents: 13500,
-      imageAsset: 'assets/images/Friends.JPG'
+      imageAsset: 'assets/images/m2g.JPG'
     ),
     Item(
       id: '2',
       name: 'Elite - Luxury Shuttle & Best Day in Seattle',
       description: 'Elite VIP - Shuttle & All-inclusive Ultimate City Experience Pass',
       priceCents: 27900,
-      imageAsset: 'assets/images/GreatWheel.JPG',
+      imageAsset: 'assets/images/vip.JPG',
     ),
     Item(
       id: '3',
@@ -90,7 +90,7 @@ class CatalogModel extends ChangeNotifier {
       id: '4',
       name: 'Great Wheel - add on admission',
       description: 'Seattles Great Wheel - add on admission',
-      imageAsset: 'assets/images/pikeplace.JPG',
+      imageAsset: 'assets/images/GreatWheel.JPG',
       priceCents: 2500,
     ),
         Item(
@@ -98,14 +98,14 @@ class CatalogModel extends ChangeNotifier {
       name: 'New Years Eve Sunset on the Sound Cocktail Cruise',
       description: 'New Year’s Eve Sunset on the Sound. Celebrate the year’s end with a scenic cruise on Puget Sound! Enjoy festive music, city lights, and stunning views as the sun sets behind the Olympics and Seattle comes alive for New Year’s Eve.',
       priceCents: 25900,
-      imageAsset: 'assets/images/private.JPG',
+      imageAsset: 'assets/images/sunset.JPG',
     ),
         Item(
       id: '6',
       name: 'Pike Place The Market Experience Tour',
       description: 'The Market Experience is a one-hour guided walking tour through the heart of Seattle’s iconic Pike Place Market. Led by a local storyteller, you’ll explore hidden corners, meet market makers, and learn the surprising history behind the Market’s shops.',
       priceCents: 4200,
-      imageAsset: 'assets/images/Scootours.JPG',
+      imageAsset: 'assets/images/pikeplace.JPG',
     ),
         Item(
       id: '7',
@@ -126,7 +126,14 @@ class CatalogModel extends ChangeNotifier {
       name: 'White Heron Cellars Tasting',
       description: 'Seattles Great Wheel - add on admission',
       priceCents: 3800,
-      imageAsset: 'assets/images/wine.JPG',
+      imageAsset: 'assets/images/wines.png',
+    ),
+        Item(
+      id: '10',
+      name: 'Beneath the Streets Underground Tour',
+      description: 'Beneath the Streets Underground Tour',
+      priceCents: 3800,
+      imageAsset: 'assets/images/street.png',
     ),
   ];
 
