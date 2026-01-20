@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/product_detail_screen.dart';
+import 'package:barcode_widget/barcode_widget.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+
 
 
 void main() {
@@ -10,6 +13,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => CatalogModel()),
         ChangeNotifierProvider(create: (_) => CartModel()),
         ChangeNotifierProvider(create: (_) => OrdersModel()),
+        ChangeNotifierProvider(create: (_) => TicketsModel()),
       ],
       child: const ShopApp(),
     ),
@@ -75,7 +79,7 @@ class CatalogModel extends ChangeNotifier {
     Item(
       id: '2',
       name: 'Elite - Luxury Shuttle & Best Day in Seattle',
-      description: 'Elite VIP - Shuttle & All-inclusive Ultimate City Experience Pass',
+      description: 'Elite is our premium, all-inclusive way to experience the very best of Seattle in total comfort and style. Guests enjoy private luxury transportation paired with expertly curated sightseeing and experiences, creating a seamless “best day in Seattle” without stress, crowds, or logistics. From iconic landmarks to hidden gems, Elite delivers a personalized, first-class Seattle adventure from start to finish.',
       priceCents: 27900,
       imageAsset: 'assets/images/vip.JPG',
     ),
@@ -89,7 +93,7 @@ class CatalogModel extends ChangeNotifier {
     Item(
       id: '4',
       name: 'Great Wheel - add on admission',
-      description: 'Seattles Great Wheel - add on admission',
+      description: 'Enhance any of our tours with an optional ride on the Seattle Great Wheel. This easy add-on gives guests breathtaking views of Elliott Bay, the skyline, and Mount Rainier—without the hassle of separate tickets or lines. It’s the perfect way to elevate your Seattle experience and capture unforgettable photos.',
       imageAsset: 'assets/images/GreatWheel.JPG',
       priceCents: 2500,
     ),
@@ -103,35 +107,35 @@ class CatalogModel extends ChangeNotifier {
         Item(
       id: '6',
       name: 'Pike Place The Market Experience Tour',
-      description: 'The Market Experience is a one-hour guided walking tour through the heart of Seattle’s iconic Pike Place Market. Led by a local storyteller, you’ll explore hidden corners, meet market makers, and learn the surprising history behind the Market’s shops.',
+      description: 'Our Pike Place Market Experience Tour is a 90-minute guided walk through the sights, smells, and hidden secrets of Seattle’s most famous landmark. Guests go beyond the obvious to discover tucked-away corners, legendary vendors, and stories most visitors never hear. It’s an insider’s look at Pike Place that transforms a busy market into a rich, memorable experience.',
       priceCents: 4200,
       imageAsset: 'assets/images/pikeplace.JPG',
     ),
         Item(
       id: '7',
       name: 'Private Seattle Waterfront ScooTour',
-      description: 'Private ScooTour along the Waterfront - See Seattle Differently.',
+      description: 'This private ScooTour offers an exclusive way to explore Seattle’s iconic waterfront at your own pace. Guests ride comfortably through scenic paths, piers, and viewpoints while a knowledgeable guide shares stories of Seattle’s maritime history, culture, and modern transformation. Perfect for couples, families, and special occasions, this tour blends privacy, fun, and unforgettable views.',
       priceCents: 4900,
       imageAsset: 'assets/images/private.JPG',
     ),
         Item(
       id: '8',
       name: 'Seattle Sightseeing ScooTour',
-      description: 'Guided Electric Scooter Ride along the Waterfront - See Seattle Differently.',
+      description: 'Our 90-minute Seattle Sightseeing ScooTour packs the city’s most popular downtown sights and sounds into one effortless adventure. Guests cover far more ground than a walking tour while avoiding fatigue, all while guided by local experts who bring Seattle’s vibe to life. It’s the perfect introduction to the city and an ideal way to identify favorite spots to explore further—great for both small and large groups.',
       priceCents: 3900,
       imageAsset: 'assets/images/Scootours.JPG',
     ),
         Item(
       id: '9',
       name: 'White Heron Cellars Tasting',
-      description: 'Seattles Great Wheel - add on admission',
+      description: 'White Heron Cellars is located in the middle of our vineyard property in the ghost town of Trinidad, between Quincy and Wenatchee, above the Columbia River in Washington State.The winery started making wine in 1986 with a Washington State Pinot Noir. In the spring of 1988, White Heron released the 1986 Pinot Noir and the 1987 Dry Riesling. Subsequent vintages of these wines have been released and in 1990 White Heron added the 1988 Chantepierre - a meritage type blend of Cabernet Savignon, Cabernet Franc, and Merlot. Current vintages are made with grapes from our own vineyards and from selected Columbia Valley growers. Each wine is unique in style and creates its own niche in the wine world.',
       priceCents: 3800,
       imageAsset: 'assets/images/wines.png',
     ),
         Item(
       id: '10',
       name: 'Beneath the Streets Underground Tour',
-      description: 'Beneath the Streets Underground Tour',
+      description: 'Beneath the Streets offers boutique underground tours that provide authentic,one-of-a-kind, explorations of Seattles historic underground passageways in Pioneer Square, the city’s original neighborhood. Our one hour walking tours are led by experienced  and engaging guides who are passionate about Seattles rich history. Each tour is unscripted, making every experience unique. Our guides also share insider tips and local favorites to enhance your visit!',
       priceCents: 3800,
       imageAsset: 'assets/images/street.png',
     ),
@@ -248,6 +252,48 @@ class OrdersModel extends ChangeNotifier {
   }
 }
 
+class Ticket {
+  final String id; // unique
+  final String title;
+  final String description;
+  final String imageAsset;
+  final String barcodeNumber; // what the barcode encodes
+  final String qrData;        // what the QR encodes (could be same as barcodeNumber)
+
+  const Ticket({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.imageAsset,
+    required this.barcodeNumber,
+    required this.qrData,
+  });
+}
+
+class TicketsModel extends ChangeNotifier {
+  final List<Ticket> _tickets = const [
+    Ticket(
+      id: 't1',
+      title: 'Pike Place Cocktail Experience',
+      description: 'Show this ticket at check-in. Valid for 1 entry.',
+      imageAsset: 'assets/images/ticket1.jpg',
+      barcodeNumber: '123456789012',
+      qrData: 'WCTP-TICKET-t1-123456789012',
+    ),
+    Ticket(
+      id: 't2',
+      title: 'Seattle Great Wheel Add-on',
+      description: 'Present this ticket at the gate. Valid for 1 ride.',
+      imageAsset: 'assets/images/ticket2.jpg',
+      barcodeNumber: '987654321098',
+      qrData: 'WCTP-TICKET-t2-987654321098',
+    ),
+  ];
+
+  List<Ticket> get tickets => List.unmodifiable(_tickets);
+}
+
+
 /// -------------------------
 /// UI
 /// -------------------------
@@ -269,6 +315,7 @@ class _ShopHomeState extends State<ShopHome> {
       const CatalogScreen(),
       const CartScreen(),
       const OrdersScreen(),
+      const TicketsScreen()
     ];
 
     return Scaffold(
@@ -306,6 +353,10 @@ class _ShopHomeState extends State<ShopHome> {
           const NavigationDestination(
             icon: Icon(Icons.receipt_long),
             label: 'Orders',
+          ),
+          const NavigationDestination(
+            icon: Icon(Icons.confirmation_number),
+            label: 'Tickets',
           ),
         ],
         onDestinationSelected: (idx) => setState(() => _tabIndex = idx),
@@ -417,6 +468,95 @@ class CatalogScreen extends StatelessWidget {
     );
   }
 }
+
+class TicketsScreen extends StatelessWidget {
+  const TicketsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final ticketsModel = context.watch<TicketsModel>();
+    final tickets = ticketsModel.tickets;
+
+    if (tickets.isEmpty) {
+      return const Center(child: Text('No tickets yet.'));
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(12),
+      itemCount: tickets.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final t = tickets[index];
+
+        return Card(
+          color: Colors.orange, // matches your card styling
+          clipBehavior: Clip.antiAlias,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Image on top
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Image.asset(
+                    t.imageAsset,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stack) {
+                      return const Center(child: Text('Ticket image not found'));
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                Text(
+                  t.title,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
+                Text(t.description),
+
+                const SizedBox(height: 14),
+
+                // Barcode number + barcode
+                Text(
+                  'Barcode: ${t.barcodeNumber}',
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 90,
+                  child: BarcodeWidget(
+                    barcode: Barcode.code128(),
+                    data: t.barcodeNumber,
+                    drawText: false,
+                  ),
+                ),
+
+                const SizedBox(height: 14),
+
+                // QR code
+                const Text(
+                  'QR Code',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                Center(
+                  child: QrImageView(
+                    data: t.qrData,
+                    size: 180,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});

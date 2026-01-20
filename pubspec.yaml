@@ -46,6 +46,8 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   provider: ^6.1.2
+  barcode_widget: ^2.0.4
+  qr_flutter: ^4.1.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -68,6 +70,8 @@ flutter:
     - assets/images/sunset.JPG
     - assets/images/vip.JPG
     - assets/images/wine.JPG
+    - assets/images/wines.png
+    - assets/images/street.png
 
 
   # To add assets to your application, add an assets section, like this:
