@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../main.dart'; // gives access to Item & CartModel
+import '../main.dart'; // gives access to Item, CartModel, and productImage()
 
 class ProductDetailScreen extends StatelessWidget {
   final Item item;
@@ -24,10 +24,8 @@ class ProductDetailScreen extends StatelessWidget {
           children: [
             AspectRatio(
               aspectRatio: 1 / 1,
-              child: Image.asset(
-                item.imageAsset,
-                fit: BoxFit.cover,
-              ),
+              // ✅ supports imageAsset OR imageUrl and avoids String? error
+              child: productImage(item),
             ),
             Padding(
               padding: const EdgeInsets.all(16),
@@ -41,7 +39,22 @@ class ProductDetailScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+
                   const SizedBox(height: 8),
+
+                  // ✅ rating + rating count
+                  Row(
+                    children: [
+                      const Icon(Icons.star, size: 18),
+                      const SizedBox(width: 6),
+                      Text(item.rating.toStringAsFixed(1)),
+                      const SizedBox(width: 8),
+                      Text('(${item.ratingCount} ratings)'),
+                    ],
+                  ),
+
+                  const SizedBox(height: 10),
+
                   Text(
                     item.priceText,
                     style: const TextStyle(
@@ -49,12 +62,16 @@ class ProductDetailScreen extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+
                   const SizedBox(height: 16),
+
                   Text(
                     item.description,
                     style: const TextStyle(fontSize: 16),
                   ),
+
                   const SizedBox(height: 24),
+
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton(

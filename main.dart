@@ -46,19 +46,56 @@ class ShopApp extends StatelessWidget {
 class Item {
   final String id;
   final String name;
+
+  // NEW: short text for the card + full text for the detail page
+  final String shortDescription;
   final String description;
+
   final int priceCents;
-  final String imageAsset;
+
+  // Keep assets, but also allow URL images for items you add in Store
+  final String? imageAsset;
+  final String? imageUrl;
+
+  // NEW: ratings
+  final double rating; // e.g. 4.7
+  final int ratingCount;
 
   const Item({
     required this.id,
     required this.name,
+    required this.shortDescription,
     required this.description,
     required this.priceCents,
-    required this.imageAsset,
+    this.imageAsset,
+    this.imageUrl,
+    this.rating = 0.0,
+    this.ratingCount = 0,
   });
 
   String get priceText => _formatCents(priceCents);
+}
+
+Widget productImage(Item item) {
+  if (item.imageUrl != null && item.imageUrl!.trim().isNotEmpty) {
+    return Image.network(
+      item.imageUrl!,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stack) =>
+          const Center(child: Text('Image failed')),
+    );
+  }
+
+  if (item.imageAsset != null && item.imageAsset!.trim().isNotEmpty) {
+    return Image.asset(
+      item.imageAsset!,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stack) =>
+          const Center(child: Text('Image not found')),
+    );
+  }
+
+  return const Center(child: Text('No image'));
 }
 
 String _formatCents(int cents) {
@@ -68,76 +105,106 @@ String _formatCents(int cents) {
 
 class CatalogModel extends ChangeNotifier {
   // In a real app, this list would come from an API.
-  final List<Item> _items = const [
+  final List<Item> _items = [
     Item(
       id: '1',
       name: 'Cocktails And Stories From Pike Place Market',
+      shortDescription: 'Market ingredients + hands-on cocktail class.',
       description: 'Discover Seattle’s Pike Place Market through its flavors, then a hands-on cocktail class with founder Bryan Jarr or one of his staff. You’ll shop the Market for fresh ingredients, learn mixology techniques, and craft signature Northwest cocktails',
       priceCents: 13500,
-      imageAsset: 'assets/images/m2g.JPG'
+      imageAsset: 'assets/images/m2g.JPG',
+      rating: 4.8,
+      ratingCount: 214,
     ),
     Item(
       id: '2',
       name: 'Elite - Luxury Shuttle & Best Day in Seattle',
+      shortDescription: 'Market ingredients + hands-on cocktail class.',
       description: 'Elite is our premium, all-inclusive way to experience the very best of Seattle in total comfort and style. Guests enjoy private luxury transportation paired with expertly curated sightseeing and experiences, creating a seamless “best day in Seattle” without stress, crowds, or logistics. From iconic landmarks to hidden gems, Elite delivers a personalized, first-class Seattle adventure from start to finish.',
       priceCents: 27900,
       imageAsset: 'assets/images/vip.JPG',
+      rating: 4.8,
+      ratingCount: 214,
     ),
     Item(
       id: '3',
       name: 'Friends Pass: ScooTours Adventure, Pike Place - The Market Experience, Seattle Great Wheel, Beneath The Streets underground tour',
+      shortDescription: 'Market ingredients + hands-on cocktail class.',
       description: 'Friends Pass - Shuttle & All-inclusive Ultimate City Experience Pass',
       priceCents: 18500,
       imageAsset: 'assets/images/m2g.JPG',
+      rating: 4.8,
+      ratingCount: 214,
     ),
     Item(
       id: '4',
       name: 'Great Wheel - add on admission',
+      shortDescription: 'Market ingredients + hands-on cocktail class.',
       description: 'Enhance any of our tours with an optional ride on the Seattle Great Wheel. This easy add-on gives guests breathtaking views of Elliott Bay, the skyline, and Mount Rainier—without the hassle of separate tickets or lines. It’s the perfect way to elevate your Seattle experience and capture unforgettable photos.',
       imageAsset: 'assets/images/GreatWheel.JPG',
       priceCents: 2500,
+      rating: 4.8,
+      ratingCount: 214,
     ),
         Item(
       id: '5',
       name: 'New Years Eve Sunset on the Sound Cocktail Cruise',
+      shortDescription: 'Market ingredients + hands-on cocktail class.',
       description: 'New Year’s Eve Sunset on the Sound. Celebrate the year’s end with a scenic cruise on Puget Sound! Enjoy festive music, city lights, and stunning views as the sun sets behind the Olympics and Seattle comes alive for New Year’s Eve.',
       priceCents: 25900,
       imageAsset: 'assets/images/sunset.JPG',
+      rating: 4.8,
+      ratingCount: 214,
     ),
         Item(
       id: '6',
       name: 'Pike Place The Market Experience Tour',
+      shortDescription: 'Market ingredients + hands-on cocktail class.',
       description: 'Our Pike Place Market Experience Tour is a 90-minute guided walk through the sights, smells, and hidden secrets of Seattle’s most famous landmark. Guests go beyond the obvious to discover tucked-away corners, legendary vendors, and stories most visitors never hear. It’s an insider’s look at Pike Place that transforms a busy market into a rich, memorable experience.',
       priceCents: 4200,
       imageAsset: 'assets/images/pikeplace.JPG',
+      rating: 4.8,
+      ratingCount: 214,
     ),
         Item(
       id: '7',
       name: 'Private Seattle Waterfront ScooTour',
+      shortDescription: 'Market ingredients + hands-on cocktail class.',
       description: 'This private ScooTour offers an exclusive way to explore Seattle’s iconic waterfront at your own pace. Guests ride comfortably through scenic paths, piers, and viewpoints while a knowledgeable guide shares stories of Seattle’s maritime history, culture, and modern transformation. Perfect for couples, families, and special occasions, this tour blends privacy, fun, and unforgettable views.',
       priceCents: 4900,
       imageAsset: 'assets/images/private.JPG',
+      rating: 4.8,
+      ratingCount: 214,
     ),
         Item(
       id: '8',
       name: 'Seattle Sightseeing ScooTour',
+      shortDescription: 'Market ingredients + hands-on cocktail class.',
       description: 'Our 90-minute Seattle Sightseeing ScooTour packs the city’s most popular downtown sights and sounds into one effortless adventure. Guests cover far more ground than a walking tour while avoiding fatigue, all while guided by local experts who bring Seattle’s vibe to life. It’s the perfect introduction to the city and an ideal way to identify favorite spots to explore further—great for both small and large groups.',
       priceCents: 3900,
       imageAsset: 'assets/images/Scootours.JPG',
+      rating: 4.8,
+      ratingCount: 214,
     ),
         Item(
       id: '9',
       name: 'White Heron Cellars Tasting',
+      shortDescription: 'Market ingredients + hands-on cocktail class.',
       description: 'White Heron Cellars is located in the middle of our vineyard property in the ghost town of Trinidad, between Quincy and Wenatchee, above the Columbia River in Washington State.The winery started making wine in 1986 with a Washington State Pinot Noir. In the spring of 1988, White Heron released the 1986 Pinot Noir and the 1987 Dry Riesling. Subsequent vintages of these wines have been released and in 1990 White Heron added the 1988 Chantepierre - a meritage type blend of Cabernet Savignon, Cabernet Franc, and Merlot. Current vintages are made with grapes from our own vineyards and from selected Columbia Valley growers. Each wine is unique in style and creates its own niche in the wine world.',
       priceCents: 3800,
       imageAsset: 'assets/images/wines.png',
+      rating: 4.8,
+      ratingCount: 214,
     ),
         Item(
       id: '10',
       name: 'Beneath the Streets Underground Tour',
+      shortDescription: 'Market ingredients + hands-on cocktail class.',
       description: 'Beneath the Streets offers boutique underground tours that provide authentic,one-of-a-kind, explorations of Seattles historic underground passageways in Pioneer Square, the city’s original neighborhood. Our one hour walking tours are led by experienced  and engaging guides who are passionate about Seattles rich history. Each tour is unscripted, making every experience unique. Our guides also share insider tips and local favorites to enhance your visit!',
       priceCents: 3800,
       imageAsset: 'assets/images/street.png',
+      rating: 4.8,
+      ratingCount: 214,
     ),
   ];
 
@@ -149,6 +216,10 @@ class CatalogModel extends ChangeNotifier {
     } catch (_) {
       return null;
     }
+  }
+    void addItem(Item item) {
+      _items.insert(0, item); // new items show first
+      notifyListeners();
   }
 }
 
@@ -312,11 +383,14 @@ class _ShopHomeState extends State<ShopHome> {
     final cart = context.watch<CartModel>();
 
     final pages = [
-      const CatalogScreen(),
-      const CartScreen(),
-      const OrdersScreen(),
-      const TicketsScreen()
+      const CatalogScreen(),  // Shop
+      const StoreScreen(),    // Store
+      const CartScreen(),     // Cart
+      const OrdersScreen(),   // Orders
+      const TicketsScreen(),  // Tickets
     ];
+
+
 
     return Scaffold(
       appBar: AppBar(
@@ -341,6 +415,10 @@ class _ShopHomeState extends State<ShopHome> {
           const NavigationDestination(
             icon: Icon(Icons.storefront),
             label: 'Shop',
+          ),
+          const NavigationDestination(
+            icon: Icon(Icons.add_business),
+            label: 'Store',
           ),
           NavigationDestination(
             icon: Badge(
@@ -412,11 +490,8 @@ class CatalogScreen extends StatelessWidget {
               children: [
                 AspectRatio(
                   aspectRatio: 1 / 1,
-                  child: Image.asset(
-                    item.imageAsset,
-                    fit: BoxFit.cover,
+                  child: productImage(item),
                   ),
-                ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(10),
@@ -431,6 +506,22 @@ class CatalogScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(item.priceText),
+                        const SizedBox(height: 6),
+                        Text(
+                          item.shortDescription,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            const Icon(Icons.star, size: 16),
+                            const SizedBox(width: 4),
+                            Text(item.rating.toStringAsFixed(1)),
+                            const SizedBox(width: 6),
+                            Text('(${item.ratingCount})'),
+                          ],
+                        ),
                         const Spacer(),
                         if (qty == 0)
                           SizedBox(
@@ -465,6 +556,186 @@ class CatalogScreen extends StatelessWidget {
         );
       },
 
+    );
+  }
+}
+class StoreScreen extends StatefulWidget {
+  const StoreScreen({super.key});
+
+  @override
+  State<StoreScreen> createState() => _StoreScreenState();
+}
+
+class _StoreScreenState extends State<StoreScreen> {
+  final _formKey = GlobalKey<FormState>();
+
+  final _name = TextEditingController();
+  final _shortDesc = TextEditingController();
+  final _fullDesc = TextEditingController();
+  final _price = TextEditingController(); // 12.99
+  final _imageUrl = TextEditingController(); // optional
+  final _rating = TextEditingController(text: '4.5');
+  final _ratingCount = TextEditingController(text: '10');
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _shortDesc.dispose();
+    _fullDesc.dispose();
+    _price.dispose();
+    _imageUrl.dispose();
+    _rating.dispose();
+    _ratingCount.dispose();
+    super.dispose();
+  }
+
+  int _priceToCents(String dollarsText) {
+    final value = double.tryParse(dollarsText.trim()) ?? 0.0;
+    return (value * 100).round();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final catalog = context.watch<CatalogModel>();
+
+    return ListView(
+      padding: const EdgeInsets.all(12),
+      children: [
+        const Text(
+          'Store (Add items for sale)',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+
+        Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _name,
+                decoration: const InputDecoration(labelText: 'Product name'),
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+              ),
+              const SizedBox(height: 10),
+
+              TextFormField(
+                controller: _shortDesc,
+                decoration: const InputDecoration(
+                  labelText: 'Brief description (shows on Shop card)',
+                ),
+                maxLines: 2,
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+              ),
+              const SizedBox(height: 10),
+
+              TextFormField(
+                controller: _fullDesc,
+                decoration: const InputDecoration(
+                  labelText: 'Full description (detail page)',
+                ),
+                maxLines: 4,
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+              ),
+              const SizedBox(height: 10),
+
+              TextFormField(
+                controller: _price,
+                decoration: const InputDecoration(labelText: 'Price (example: 12.99)'),
+                keyboardType: TextInputType.number,
+                validator: (v) {
+                  final p = double.tryParse((v ?? '').trim());
+                  if (p == null || p <= 0) return 'Enter a valid price';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+
+              TextFormField(
+                controller: _imageUrl,
+                decoration: const InputDecoration(
+                  labelText: 'Image URL (optional)',
+                  hintText: 'https://...',
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _rating,
+                      decoration: const InputDecoration(labelText: 'Rating (0-5)'),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _ratingCount,
+                      decoration: const InputDecoration(labelText: '# of ratings'),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 14),
+
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () {
+                    if (!_formKey.currentState!.validate()) return;
+
+                    final newItem = Item(
+                      id: DateTime.now().millisecondsSinceEpoch.toString(),
+                      name: _name.text.trim(),
+                      shortDescription: _shortDesc.text.trim(),
+                      description: _fullDesc.text.trim(),
+                      priceCents: _priceToCents(_price.text),
+                      imageUrl: _imageUrl.text.trim().isEmpty ? null : _imageUrl.text.trim(),
+                      imageAsset: null, // Store items use URL by default
+                      rating: double.tryParse(_rating.text.trim()) ?? 0.0,
+                      ratingCount: int.tryParse(_ratingCount.text.trim()) ?? 0,
+                    );
+
+                    context.read<CatalogModel>().addItem(newItem);
+
+                    _name.clear();
+                    _shortDesc.clear();
+                    _fullDesc.clear();
+                    _price.clear();
+                    _imageUrl.clear();
+                    _rating.text = '4.5';
+                    _ratingCount.text = '10';
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Added! Check the Shop tab.')),
+                    );
+                  },
+                  child: const Text('Add Product'),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 22),
+        const Text(
+          'Preview (current catalog)',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+
+        ...catalog.items.map((item) {
+          return Card(
+            child: ListTile(
+              title: Text(item.name),
+              subtitle: Text('${item.priceText} • ${item.shortDescription}'),
+            ),
+          );
+        }),
+      ],
     );
   }
 }
