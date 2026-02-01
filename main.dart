@@ -6,6 +6,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 
 
+
+
+
 void main() {
   runApp(
     MultiProvider(
@@ -208,20 +211,47 @@ class CatalogModel extends ChangeNotifier {
     ),
   ];
 
+  final List<Item> _storeItems = [
+    Item(
+      id: 's1',
+      name: 'Captain Mikes List',
+      shortDescription: 'Send your loved ones the best gift captain mike could wrandgle up',
+      description:
+          'Mike has selected the following from the market just for you',
+      priceCents: 49900,
+      imageAsset: 'assets/images/shopping.webp',
+      rating: 4.9,
+      ratingCount: 322,
+    ),
+    Item(
+      id: 's2',
+      name: 'Jackies Box',
+      shortDescription: 'Send your loved ones the best gifts from our celebrity shopper',
+      description:
+          'Jackies gift box includes',
+      priceCents: 79900,
+      imageAsset: 'assets/images/gift.webp',
+      rating: 4.7,
+      ratingCount: 180,
+    ),
+    // Add as many Store items as you want here
+  ];
+
   List<Item> get items => List.unmodifiable(_items);
+  List<Item> get storeItems => List.unmodifiable(_storeItems);
 
   Item? findById(String id) {
+    // optional: search BOTH lists
+    final all = [..._items, ..._storeItems];
     try {
-      return _items.firstWhere((i) => i.id == id);
+      return all.firstWhere((i) => i.id == id);
     } catch (_) {
       return null;
     }
   }
-    void addItem(Item item) {
-      _items.insert(0, item); // new items show first
-      notifyListeners();
-  }
 }
+
+
 
 class CartLine {
   final Item item;
@@ -466,7 +496,7 @@ class CatalogScreen extends StatelessWidget {
       maxCrossAxisExtent: 220,
       mainAxisSpacing: 12,
       crossAxisSpacing: 12,
-      childAspectRatio: 0.55,
+      childAspectRatio: 0.45,
       ),
       // 👆 END GRID DELEGATE
       itemBuilder: (context, index) {
@@ -491,7 +521,9 @@ class CatalogScreen extends StatelessWidget {
                 AspectRatio(
                   aspectRatio: 1 / 1,
                   child: productImage(item),
-                  ),
+                ),
+
+                // ✅ this part scrolls/shrinks safely inside the grid tile
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(10),
@@ -505,13 +537,16 @@ class CatalogScreen extends StatelessWidget {
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 4),
+
                         Text(item.priceText),
+
                         const SizedBox(height: 6),
                         Text(
                           item.shortDescription,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
+
                         const SizedBox(height: 6),
                         Row(
                           children: [
@@ -522,7 +557,9 @@ class CatalogScreen extends StatelessWidget {
                             Text('(${item.ratingCount})'),
                           ],
                         ),
-                        const Spacer(),
+
+                        const Spacer(), // ✅ pushes buttons to bottom safely
+
                         if (qty == 0)
                           SizedBox(
                             width: double.infinity,
@@ -552,6 +589,7 @@ class CatalogScreen extends StatelessWidget {
                 ),
               ],
             ),
+
           ),
         );
       },
@@ -559,186 +597,122 @@ class CatalogScreen extends StatelessWidget {
     );
   }
 }
-class StoreScreen extends StatefulWidget {
+class StoreScreen extends StatelessWidget {
   const StoreScreen({super.key});
-
-  @override
-  State<StoreScreen> createState() => _StoreScreenState();
-}
-
-class _StoreScreenState extends State<StoreScreen> {
-  final _formKey = GlobalKey<FormState>();
-
-  final _name = TextEditingController();
-  final _shortDesc = TextEditingController();
-  final _fullDesc = TextEditingController();
-  final _price = TextEditingController(); // 12.99
-  final _imageUrl = TextEditingController(); // optional
-  final _rating = TextEditingController(text: '4.5');
-  final _ratingCount = TextEditingController(text: '10');
-
-  @override
-  void dispose() {
-    _name.dispose();
-    _shortDesc.dispose();
-    _fullDesc.dispose();
-    _price.dispose();
-    _imageUrl.dispose();
-    _rating.dispose();
-    _ratingCount.dispose();
-    super.dispose();
-  }
-
-  int _priceToCents(String dollarsText) {
-    final value = double.tryParse(dollarsText.trim()) ?? 0.0;
-    return (value * 100).round();
-  }
 
   @override
   Widget build(BuildContext context) {
     final catalog = context.watch<CatalogModel>();
+    final cart = context.watch<CartModel>();
 
-    return ListView(
-      padding: const EdgeInsets.all(12),
-      children: [
-        const Text(
-          'Store (Add items for sale)',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Store'),
+        backgroundColor: Colors.orange,
+      ),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: catalog.storeItems.length,
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 220,
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
+          childAspectRatio: 0.45,
         ),
-        const SizedBox(height: 10),
+        itemBuilder: (context, index) {
+          final item = catalog.storeItems[index];
+          final qty = cart.quantityFor(item.id);
 
-        Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _name,
-                decoration: const InputDecoration(labelText: 'Product name'),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
-              ),
-              const SizedBox(height: 10),
-
-              TextFormField(
-                controller: _shortDesc,
-                decoration: const InputDecoration(
-                  labelText: 'Brief description (shows on Shop card)',
+          return InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ProductDetailScreen(item: item),
                 ),
-                maxLines: 2,
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
-              ),
-              const SizedBox(height: 10),
-
-              TextFormField(
-                controller: _fullDesc,
-                decoration: const InputDecoration(
-                  labelText: 'Full description (detail page)',
-                ),
-                maxLines: 4,
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
-              ),
-              const SizedBox(height: 10),
-
-              TextFormField(
-                controller: _price,
-                decoration: const InputDecoration(labelText: 'Price (example: 12.99)'),
-                keyboardType: TextInputType.number,
-                validator: (v) {
-                  final p = double.tryParse((v ?? '').trim());
-                  if (p == null || p <= 0) return 'Enter a valid price';
-                  return null;
-                },
-              ),
-              const SizedBox(height: 10),
-
-              TextFormField(
-                controller: _imageUrl,
-                decoration: const InputDecoration(
-                  labelText: 'Image URL (optional)',
-                  hintText: 'https://...',
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              Row(
+              );
+            },
+            child: Card(
+              color: Colors.orange,
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _rating,
-                      decoration: const InputDecoration(labelText: 'Rating (0-5)'),
-                      keyboardType: TextInputType.number,
-                    ),
+                  AspectRatio(
+                    aspectRatio: 1 / 1,
+                    child: productImage(item),
                   ),
-                  const SizedBox(width: 10),
                   Expanded(
-                    child: TextFormField(
-                      controller: _ratingCount,
-                      decoration: const InputDecoration(labelText: '# of ratings'),
-                      keyboardType: TextInputType.number,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+
+
+                          const SizedBox(height: 4),
+                          Text(item.priceText),
+                          const SizedBox(height: 6),
+                          Text(
+                            item.shortDescription,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              const Icon(Icons.star, size: 16),
+                              const SizedBox(width: 4),
+                              Text(item.rating.toStringAsFixed(1)),
+                              const SizedBox(width: 6),
+                              Text('(${item.ratingCount})'),
+                            ],
+                          ),
+                          const Spacer(),
+                          if (qty == 0)
+                            SizedBox(
+                              width: double.infinity,
+                              child: FilledButton(
+                                onPressed: () => cart.add(item),
+                                child: const Text('Add'),
+                              ),
+                            )
+                          else
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                IconButton(
+                                  onPressed: () => cart.removeOne(item),
+                                  icon: const Icon(Icons.remove),
+                                ),
+                                Text('$qty'),
+                                IconButton(
+                                  onPressed: () => cart.add(item),
+                                  icon: const Icon(Icons.add),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
-
-              const SizedBox(height: 14),
-
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () {
-                    if (!_formKey.currentState!.validate()) return;
-
-                    final newItem = Item(
-                      id: DateTime.now().millisecondsSinceEpoch.toString(),
-                      name: _name.text.trim(),
-                      shortDescription: _shortDesc.text.trim(),
-                      description: _fullDesc.text.trim(),
-                      priceCents: _priceToCents(_price.text),
-                      imageUrl: _imageUrl.text.trim().isEmpty ? null : _imageUrl.text.trim(),
-                      imageAsset: null, // Store items use URL by default
-                      rating: double.tryParse(_rating.text.trim()) ?? 0.0,
-                      ratingCount: int.tryParse(_ratingCount.text.trim()) ?? 0,
-                    );
-
-                    context.read<CatalogModel>().addItem(newItem);
-
-                    _name.clear();
-                    _shortDesc.clear();
-                    _fullDesc.clear();
-                    _price.clear();
-                    _imageUrl.clear();
-                    _rating.text = '4.5';
-                    _ratingCount.text = '10';
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Added! Check the Shop tab.')),
-                    );
-                  },
-                  child: const Text('Add Product'),
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 22),
-        const Text(
-          'Preview (current catalog)',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 10),
-
-        ...catalog.items.map((item) {
-          return Card(
-            child: ListTile(
-              title: Text(item.name),
-              subtitle: Text('${item.priceText} • ${item.shortDescription}'),
             ),
           );
-        }),
-      ],
+        },
+      ),
     );
   }
 }
+
+
 
 class TicketsScreen extends StatelessWidget {
   const TicketsScreen({super.key});
